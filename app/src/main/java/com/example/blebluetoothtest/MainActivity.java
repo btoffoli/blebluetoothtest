@@ -68,15 +68,15 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Activity self = this;
         super.onCreate(savedInstanceState);
+        Activity self = this;
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         requestBlePermissions(this, REQUEST_ENABLE_BT);
 
-        buildRecycler();
+//        buildRecycler();
 
         final BluetoothManager bluetoothManager;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
