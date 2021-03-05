@@ -18,9 +18,10 @@ public class FirstFragment extends Fragment {
             Bundle savedInstanceState
     ) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_first, container, false);
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.ble_list);
-        return  rootView;
+        return inflater.inflate(R.layout.fragment_first, container, false);
+//        View rootView = inflater.inflate(R.layout.fragment_first, container, false);
+//        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.ble_list);
+//        return  rootView;
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {

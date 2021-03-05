@@ -74,10 +74,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        requestBlePermissions(this, REQUEST_ENABLE_BT);
-
-//        buildRecycler();
-
         final BluetoothManager bluetoothManager;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
             bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
@@ -94,7 +90,11 @@ public class MainActivity extends AppCompatActivity {
                         .setPositiveButton("Sim", (dialog, which) -> {
                             enableBluetooth();
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                buildRecycler();
                                 scanLeDevice(!mScanning);
+
+//                                insertDeviceOnRecycler("LALA", "LALA");
+//                                insertDeviceOnRecycler("LALA", "LALA");
                             }
                             dialog.dismiss();
                         })
@@ -134,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void enableBluetooth() {
+        requestBlePermissions(this, REQUEST_ENABLE_BT);
         if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
@@ -144,8 +145,9 @@ public class MainActivity extends AppCompatActivity {
     private void scanLeDevice(final boolean enable) {
 
 
-        bleList.clearAnimation();
-
+        devices.clear();
+//        bleList.clearAnimation();
+        bleList.getAdapter().notifyDataSetChanged();
 //        Log.d(this.getLocalClassName(), "lalala");
 //        BluetoothAdapter.LeScanCallback leScanCallback = (device, rssi, scanRecord) -> {
 //            textview_firstView.setText(scanRecord.toString());
@@ -162,8 +164,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 Log.d( "onScanResult", result.getDevice().toString());
-                                BLEDevice device = new BLEDevice(result.getDevice().getAddress(), result.getScanRecord().getDeviceName());
-
+                                insertDeviceOnRecycler(result.getDevice().getAddress(), result.getScanRecord().getDeviceName());
                             }
                         });
                     }
@@ -236,11 +237,20 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void buildRecycler() {
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.ble_list);
+        if (bleList == null) {
+            RecyclerView recyclerView = bleList = (RecyclerView) findViewById(R.id.ble_list);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            recyclerView.setAdapter(new BLEDeviceRecyclerAdapter(devices));
+            recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        }
+    }
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new BLEDeviceRecyclerAdapter(devices));
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+    private void insertDeviceOnRecycler(String mac, String deviceName) {
+        BLEDevice device = new BLEDevice(mac, (deviceName != null ? deviceName : mac));
+        if (!devices.contains(device)) {
+            devices.add(device);
+            bleList.getAdapter().notifyDataSetChanged();
+        }
     }
 
 }
