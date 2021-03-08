@@ -16,7 +16,7 @@ public class BLEDevice {
     }
 
     public String getName() {
-        return name;
+        return name != null ? name : mac;
     }
 
     @Override

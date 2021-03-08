@@ -74,11 +74,8 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        final BluetoothManager bluetoothManager;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-            bluetoothAdapter = bluetoothManager.getAdapter();
-        }
+        enableBluetooth();
+
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -88,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
                         .setTitle("Bluetooth")
                         .setMessage("Ligar bluetooth?")
                         .setPositiveButton("Sim", (dialog, which) -> {
-                            enableBluetooth();
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                 buildRecycler();
                                 scanLeDevice(!mScanning);
@@ -129,7 +125,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void requestBlePermissions(final Activity activity, int requestCode) {
         ActivityCompat.requestPermissions(activity,
-                new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                new String[]{
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.BLUETOOTH,
+                        Manifest.permission.BLUETOOTH_ADMIN
+                },
                 requestCode);
     }
 
@@ -138,6 +139,11 @@ public class MainActivity extends AppCompatActivity {
         if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            final BluetoothManager bluetoothManager;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+                bluetoothAdapter = bluetoothManager.getAdapter();
+            }
         }
     }
 

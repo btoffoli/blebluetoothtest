@@ -26,7 +26,7 @@ public class BLEDeviceRecyclerAdapter extends RecyclerView.Adapter<BLEDeviceRecy
 
     @Override
     public void onBindViewHolder(BLEDeviceRecyclerAdapter.ViewHolder holder, int position) {
-        holder.textView.setText(this.data.get(position).getName());
+        holder.setCurrentDevice(this.data.get(position));
     }
 
     @Override
@@ -36,6 +36,7 @@ public class BLEDeviceRecyclerAdapter extends RecyclerView.Adapter<BLEDeviceRecy
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView textView;
+        private BLEDevice device;
 
         public ViewHolder(View view) {
             super(view);
@@ -43,9 +44,14 @@ public class BLEDeviceRecyclerAdapter extends RecyclerView.Adapter<BLEDeviceRecy
             this.textView = view.findViewById(R.id.textview);
         }
 
+        public void setCurrentDevice(BLEDevice device) {
+            this.device = device;
+            this.textView.setText(device.getName());
+        }
+
         @Override
         public void onClick(View view) {
-            Toast.makeText(view.getContext(), "position : " + getLayoutPosition() + " text : " + this.textView.getText(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(view.getContext(), "position : " + getLayoutPosition() + " text : " + this.textView.getText() + " " + device.getMac(), Toast.LENGTH_SHORT).show();
         }
     }
 
